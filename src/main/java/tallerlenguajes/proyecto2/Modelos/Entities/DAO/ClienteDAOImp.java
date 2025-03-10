@@ -21,4 +21,28 @@ public class ClienteDAOImp implements IClienteDAO{
         return em.createQuery("from Cliente").getResultList();
     }
 
+   @Transactional(readOnly = true)
+    @Override
+    public List<Cliente> findById(Long id) {
+        return em.createQuery("from Cliente where id = :id")
+                .setParameter("id", id)
+                .getResultList();
+    }
+
+
+    @Override
+    public void save(Cliente cliente) {
+        if(cliente.getId() != null && cliente.getId() > 0){
+            em.merge(cliente);
+        }else{
+            em.persist(cliente);
+        }
+    }
+
+    @Transactional
+    @Override
+    public void delete(Long id) {
+        em.remove(findById(id));
+    }
+
 }
